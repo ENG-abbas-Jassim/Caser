@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cipher Decryptor</title>
+  <title>Caesar Cipher Decryptor</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,8 +13,9 @@
       padding: 30px;
     }
 
-    h1, h2 {
+    h1 {
       color: #fff;
+      margin-bottom: 10px;
     }
 
     .section {
@@ -22,7 +23,7 @@
       border: 2px solid #444;
       border-radius: 10px;
       padding: 20px;
-      margin: 20px auto;
+      margin: 0 auto;
       width: 80%;
       max-width: 600px;
       box-shadow: 0 0 10px #222;
@@ -44,6 +45,7 @@
       background-color: #333;
       color: white;
       cursor: pointer;
+      margin-top: 15px;
     }
 
     button:hover {
@@ -51,86 +53,46 @@
     }
 
     .output {
-      margin-top: 15px;
+      margin-top: 20px;
       text-align: left;
-      padding: 10px;
+      padding: 15px;
       background-color: #222;
       border-radius: 10px;
       white-space: pre-wrap;
-      max-height: 300px;
+      max-height: 400px;
       overflow-y: auto;
+      font-family: monospace;
     }
   </style>
 </head>
 <body>
-  <h1>Cipher Decryptor</h1>
-  <p>Decrypt Caesar & Monoalphabetic ciphers without a key!</p>
+  <h1>Caesar Cipher Decryptor</h1>
 
   <div class="section">
-    <h2>Caesar Cipher Brute Force</h2>
-    <textarea id="caesarInput" placeholder="Enter encrypted Caesar text here..."></textarea><br>
-    <button onclick="decryptCaesar()">Brute Force Decrypt</button>
+    <textarea id="caesarInput" placeholder="Enter Caesar-encrypted text..."></textarea><br>
+    <button onclick="decryptCaesar()">Show All Possibilities</button>
     <div class="output" id="caesarOutput"></div>
-  </div>
-
-  <div class="section">
-    <h2>Monoalphabetic Cipher (Frequency Analysis)</h2>
-    <textarea id="monoInput" placeholder="Enter encrypted Monoalphabetic text here..."></textarea><br>
-    <button onclick="decryptMono()">Analyze & Decrypt</button>
-    <div class="output" id="monoOutput"></div>
   </div>
 
   <script>
     function decryptCaesar() {
-      let text = document.getElementById("caesarInput").value.toUpperCase();
+      const input = document.getElementById("caesarInput").value.toUpperCase();
       let output = "";
 
       for (let shift = 1; shift <= 25; shift++) {
-        let result = "";
-        for (let i = 0; i < text.length; i++) {
-          let char = text[i];
+        let decrypted = "";
+        for (let char of input) {
           if (char >= 'A' && char <= 'Z') {
-            let code = ((char.charCodeAt(0) - 65 - shift + 26) % 26) + 65;
-            result += String.fromCharCode(code);
+            let shiftedCode = ((char.charCodeAt(0) - 65 - shift + 26) % 26) + 65;
+            decrypted += String.fromCharCode(shiftedCode);
           } else {
-            result += char;
+            decrypted += char;
           }
         }
-        output += `Shift ${shift}: ${result}\n`;
+        output += `Shift ${shift.toString().padStart(2, '0')}: ${decrypted}\n`;
       }
 
       document.getElementById("caesarOutput").innerText = output;
-    }
-
-    function decryptMono() {
-      let text = document.getElementById("monoInput").value.toUpperCase();
-      let letterFreq = {};
-
-      for (let char of text) {
-        if (char >= 'A' && char <= 'Z') {
-          letterFreq[char] = (letterFreq[char] || 0) + 1;
-        }
-      }
-
-      let sortedLetters = Object.keys(letterFreq).sort((a, b) => letterFreq[b] - letterFreq[a]);
-
-      const commonEnglish = 'ETAOINSHRDLCUMWFGYPBVKJXQZ'.split('');
-
-      let mapping = {};
-      for (let i = 0; i < sortedLetters.length; i++) {
-        mapping[sortedLetters[i]] = commonEnglish[i];
-      }
-
-      let result = "";
-      for (let char of text) {
-        if (char >= 'A' && char <= 'Z') {
-          result += mapping[char] || '?';
-        } else {
-          result += char;
-        }
-      }
-
-      document.getElementById("monoOutput").innerText = "Guessed Decryption:\n" + result;
     }
   </script>
 </body>
